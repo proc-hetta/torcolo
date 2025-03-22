@@ -1,0 +1,5 @@
+Flask==3.1.0
+Flask-SQLAlchemy==3.1.1
+eventlet==0.39.1
+gunicorn==23.0.0
+python-magic==0.4.27
