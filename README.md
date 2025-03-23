@@ -1,6 +1,6 @@
 # Torcolo
 
-Torcolo is a simple storage server general purpose. It is not developed to be used in enterprise production environment as it is mainly developed for fun. There is no security check regarding file dimensions and similar stuffs, feel free to contribute with as many pull-requests as you want to expand the software with new features.
+Torcolo is a simple general purpose storage server. It is not developed to be used in enterprise production environment as it is mainly developed for fun. There is no security check regarding file dimensions and similar stuffs, feel free to contribute with as many pull-requests as you want to expand the software with new features.
 
 The software is used to host and provide on demand resources for [/proc/hetta](https://blog.prochetta.best) projects.
 
