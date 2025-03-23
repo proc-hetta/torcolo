@@ -10,4 +10,7 @@ As it has to be a simple server, without strict requirements in terms of efficie
 
 Stored file maximum dimension is related to selected backend configuration and capabilities. As an example, if [SQLite](https://www.sqlite.org/) is used the default maximum file dimension is [1GB](https://www.sqlite.org/limits.html), raisable until 2GB
 
+
+For further documentation please visit the [wiki](https://github.com/proc-hetta/torcolo/wiki)
+
 See also the [DockerHub](https://hub.docker.com/r/m1gnus/torcolo) repository
