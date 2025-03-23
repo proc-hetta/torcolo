@@ -108,10 +108,10 @@ def put_file(file):
 def get_files():
     with db.session() as s:
         entries = list(map(
-            lambda row: [
-                str(row[0]),
-                row[1].isoformat(),
-            ],
+            lambda row: {
+                "id": str(row[0]),
+                "last_modified": row[1].isoformat(),
+            },
             s.execute(
                 select(File.id, File.last_modified)
                 .order_by(File.last_modified.desc()))
