@@ -1,0 +1,202 @@
+openapi: 3.0.4
+info:
+  title: Torcolo
+  description: |-
+    A simple storage server born to host [/proc/hetta](https://prochetta.best) blog resources. Nothing too complex, just made for fun by two IT professionals during freetime.
+
+    Github repository: [torcolo](https://github.com/proc-hetta/torcolo)
+  contact:
+    email: vittorio.mignini@gmail.com
+  license:
+    name: MIT
+    url: https://raw.githubusercontent.com/proc-hetta/torcolo/refs/heads/master/LICENSE
+  version: 1.0.0
+servers:
+  - url: https://torcolo.prochetta.best
+tags:
+  - name: files
+    description: Files management
+paths:
+  /:
+    get:
+      summary: Sanity check route
+      responses:
+        '200':
+          description: Server is working properly
+          content:
+            text/plain:
+              example: "OK"
+  /files:
+    post:
+      tags:
+        - files
+      summary: Add a new file to server's storage
+      description: Add a new file to server's storage
+      security:
+        - bearerAuth: []
+      operationId: postFile
+      requestBody:
+        description: file
+        content:
+          image/png:
+            schema:
+              type: string
+              format: binary
+          image/jpg:
+            schema:
+              type: string
+              format: binary
+          application/pdf:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              schema:
+                type: string
+                example: /files/{id}
+          content:
+            application/json:
+              schema:
+                type: object
+                example: {}
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthenticated
+
+  /files/{fileId}:
+    parameters:
+    - name: fileId
+      in: path
+      description: File ID
+      required: true
+      schema:
+        type: string
+        example: 6721b1ad-a5ba-43e9-b2c4-647fe09a725d
+
+    get:
+      tags:
+        - files
+      summary: Obtain a file from server
+      description: Obtain the file identified by `fileId` from the server
+      security:
+        - bearerAuth: []
+      operationId: getFile
+      responses:
+        '200':
+          description: OK
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+            image/jpg:
+              schema:
+                type: string
+                format: binary
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        '401':
+          description: Unauthenticated
+        '404':
+          description: Not found
+
+    put:
+      tags:
+        - files
+      summary: Replace an existing file in server's storage
+      description: Replace the existing file identified by `fileId` path parameter in server's storage
+      security:
+        - bearerAuth: []
+      operationId: putFile
+      requestBody:
+        description: file
+        content:
+          image/png:
+            schema:
+              type: string
+              format: binary
+          image/jpg:
+            schema:
+              type: string
+              format: binary
+          application/pdf:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '204':
+          description: Created
+          headers:
+            Location:
+              schema:
+                type: string
+                example: /files/{id}
+          content:
+            application/json:
+              schema:
+                type: object
+                example: {}
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthenticated
+        '404':
+          description: Not found
+
+    delete:
+      tags:
+        - files
+      summary: Obtain a file from server
+      description: Obtain the file identified by `fileId` from the server
+      security:
+        - bearerAuth: []
+      operationId: deleteFile
+      responses:
+        '204':
+          description: No content
+        '401':
+          description: Unauthenticated
+        '404':
+          description: Not found
+
+  /files/manifest:
+    get:
+      tags:
+        - files
+      summary: Obtain the file manifest
+      description: Obtain a list of metadata which identifies the files stored in the server
+      security:
+        - bearerAuth: []
+      operationId: getManifest
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: 6721b1ad-a5ba-43e9-b2c4-647fe09a725d
+                    last_modified:
+                      type: string
+                      example: 2025-03-23T10:53:33
+        '401':
+          description: Unauthenticated
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      in: header
