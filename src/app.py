@@ -61,7 +61,6 @@ def post_file():
 
 
 @app.get(f"/files/<uuid:file>")
-@authenticated
 @inject_file
 def get_file(file):
     file_content = file.data
