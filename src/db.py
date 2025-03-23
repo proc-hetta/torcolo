@@ -6,6 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import (
     LargeBinary,
     DateTime,
+    String,
     Uuid,
     func,
 )
@@ -22,6 +23,7 @@ class File(Base):
     __tablename__ = "files"
 
     id: Mapped[UUID] = mapped_column(Uuid(), primary_key=True)
+    filename: Mapped[str] = mapped_column(String())
     data: Mapped[bytes] = mapped_column(LargeBinary())
     last_modified: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

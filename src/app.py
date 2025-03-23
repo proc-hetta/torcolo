@@ -46,6 +46,7 @@ def post_file():
         s.add(
             File(
                 id = file_id,
+                filename = file.filename,
                 data = file.stream.read(),
             )
         )
@@ -96,6 +97,7 @@ def put_file(file):
         s.add(
             File(
                 id = file.id,
+                filename = file.filename,
                 data = request.files["file"].stream.read(),
             )
         )
@@ -110,10 +112,14 @@ def get_files():
         entries = list(map(
             lambda row: {
                 "id": str(row[0]),
-                "last_modified": row[1].isoformat(),
+                "filename": row[1],
+                "last_modified": row[2].isoformat(),
             },
             s.execute(
-                select(File.id, File.last_modified)
+                select(
+                    File.id,
+                    File.filename,
+                    File.last_modified)
                 .order_by(File.last_modified.desc()))
                 .fetchall(),
         ))

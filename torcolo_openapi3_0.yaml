@@ -188,6 +188,9 @@ paths:
                     id:
                       type: string
                       example: 6721b1ad-a5ba-43e9-b2c4-647fe09a725d
+                    filename:
+                      type: string
+                      example: image.png
                     last_modified:
                       type: string
                       example: 2025-03-23T10:53:33
