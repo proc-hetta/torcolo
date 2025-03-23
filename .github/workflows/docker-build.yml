@@ -15,7 +15,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: |
-            ${{ vars.REGISTRY }}/${{ github.event.repository.name }}
+            ${{ secrets.REGISTRY_USERNAME }}/${{ github.event.repository.name }}
           tags: |
             type=semver,pattern={{major}}
             type=semver,pattern={{major}}.{{minor}}
