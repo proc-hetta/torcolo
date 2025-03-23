@@ -63,6 +63,7 @@ def post_file():
 @app.get(f"/files/<uuid:file>")
 @inject_file
 def get_file(file):
+    as_attachment = "download" in request.args
     file_content = file.data
     filename = str(file.id)
     mime_type = magic.from_buffer(file_content, mime=True)
@@ -71,7 +72,7 @@ def get_file(file):
     return send_file(
         io.BytesIO(file_content),
         mimetype=mime_type,
-        as_attachment=True,
+        as_attachment=as_attachment,
         download_name=filename
     )
 
