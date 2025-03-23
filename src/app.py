@@ -11,7 +11,10 @@ from flask import (
     make_response,
 )
 
-from config import config
+from config import (
+    config,
+    VERSION,
+)
 from utils import (
     inject_file,
     authenticated,
@@ -33,7 +36,12 @@ with app.app_context():
 
 @app.get(f"/")
 def root():
-    return "OK"
+    return {
+        "major": VERSION.major,
+        "minor": VERSION.minor,
+        "micro": VERSION.micro,
+        "complete": str(VERSION),
+    }
 
 
 @app.post(f"/files")

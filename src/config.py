@@ -2,6 +2,11 @@ import os
 import configparser
 from dataclasses import dataclass
 
+from packaging.version import Version
+
+
+VERSION = Version("0.0.1")
+
 
 @dataclass
 class Config:

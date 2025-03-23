@@ -22,10 +22,24 @@ paths:
       summary: Sanity check route
       responses:
         '200':
-          description: Server is working properly
+          description: Returns server version
           content:
-            text/plain:
-              example: "OK"
+            application/json:
+              schema:
+                type: object
+                properties:
+                  major:
+                    type: integer
+                    example: 1
+                  minor:
+                    type: integer
+                    example: 0
+                  micro:
+                    type: integer
+                    example: 0
+                  complete:
+                    type: string
+                    example: 1.0.0
   /files:
     post:
       tags:
