@@ -48,7 +48,7 @@ def root():
 @authenticated
 def post_file():
     file = request.files["file"]
-
+    hp = request.files.get("n_downloads", config.healthbar)
     file_id = uuid4()
     with db.session() as s:
         s.add(
@@ -56,7 +56,7 @@ def post_file():
                 id = file_id,
                 filename = file.filename,
                 data = file.stream.read(),
-                n_downloads = 0
+                n_downloads = hp
             )
         )
         s.commit()
