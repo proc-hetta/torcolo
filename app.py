@@ -1,6 +1,7 @@
 import io
 import mimetypes
 from uuid import uuid4
+from datetime import datetime
 
 import magic
 from sqlalchemy import select
@@ -116,10 +117,16 @@ def put_file(file):
 @app.get(f"/files/manifest")
 @authenticated
 def get_files():
+    older = "older" in request.args
+    filename = f"%{request.args.get('filename', '')}%"
+    before = datetime.fromisoformat(request.args.get("before", datetime.now().isoformat()))
+    after = datetime.fromisoformat(request.args.get("after", datetime.min.isoformat()))
+    limit = int(request.args.get("limit", 100))
+
     with db.session() as s:
         entries = list(map(
             lambda row: {
-                "id": str(row[0]),
+                "id": row[0],
                 "filename": row[1],
                 "last_modified": row[2].isoformat(),
             },
@@ -128,7 +135,11 @@ def get_files():
                     File.id,
                     File.filename,
                     File.last_modified)
-                .order_by(File.last_modified.desc()))
-                .fetchall(),
+                .where(File.filename.ilike(filename))
+                .where(File.last_modified.between(after, before))
+                .order_by(File.last_modified.asc() if older else File.last_modified.desc())
+                .limit(limit)
+            ).fetchall()
         ))
+
     return {"entries": entries}

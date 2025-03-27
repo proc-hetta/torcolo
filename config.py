@@ -20,5 +20,4 @@ class Config:
         self.db_url = config["Core"]["DbUrl"]
         self.log_level = config["Core"]["LogLevel"]
 
-
 config = Config()
