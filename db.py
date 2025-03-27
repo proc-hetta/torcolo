@@ -4,6 +4,7 @@ from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 
 from sqlalchemy import (
+    Integer,
     LargeBinary,
     DateTime,
     String,
@@ -29,6 +30,10 @@ class File(Base):
         DateTime(timezone=True),
         server_default=func.now(),
         onupdate=func.now()
+    )
+    n_downloads: Mapped[int] = mapped_column(
+        Integer(),
+        server_default=0
     )
 
 
