@@ -14,6 +14,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import DeclarativeBase
+from config import config
 
 
 class Base(DeclarativeBase):
@@ -33,8 +34,11 @@ class File(Base):
     )
     n_downloads: Mapped[int] = mapped_column(
         Integer(),
-        server_default=0
+        server_default = 0
     )
-
+    healthbar: Mapped[int] = mapped_column(
+        Integer(),
+        server_default = config.healthbar
+    )
 
 db = SQLAlchemy(model_class=Base)
