@@ -57,6 +57,7 @@ def post_file():
                 id = file_id,
                 filename = file.filename,
                 data = file.stream.read(),
+                n_downloads = 0
             )
         )
         s.commit()
@@ -101,13 +102,19 @@ def delete_file(file):
 @inject_file
 def put_file(file):
     # SQLAlchemy does not yet have a backend-agnostic upsert construct (https://docs.sqlalchemy.org/en/20/orm/queryguide/dml.html#orm-queryguide-upsert)
+    # Update download counter
     with db.session() as s:
+        f = s.execute(
+            select(File.n_downloads)
+            .where(File.id == file))
+            .fetchOne()
         s.delete(file)
         s.add(
             File(
                 id = file.id,
                 filename = file.filename,
                 data = request.files["file"].stream.read(),
+                n_downloads = f[0] + 1 if f else 0
             )
         )
         s.commit()
