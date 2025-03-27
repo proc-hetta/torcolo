@@ -19,5 +19,6 @@ class Config:
         self.token = config["Core"]["Token"]
         self.db_url = config["Core"]["DbUrl"]
         self.log_level = config["Core"]["LogLevel"]
+        self.healthbar = config["Core"]["Healthbar"]
 
 config = Config()

@@ -105,14 +105,16 @@ def put_file(file):
     # Update download counter
     with db.session() as s:
         s.delete(file)
-        s.add(
-            File(
-                id = file.id,
-                filename = file.filename,
-                data = request.files["file"].stream.read(),
-                n_downloads = f.n_downloads + 1
+        if file.n_downloads < file.healthbar:
+            s.add(
+                File(
+                    id = file.id,
+                    filename = file.filename,
+                    data = request.files["file"].stream.read(),
+                    n_downloads = file.n_downloads + 1,
+                    healthbar = file.healthbar
+                )
             )
-        )
         s.commit()
     return {}, 204
 
