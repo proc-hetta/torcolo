@@ -28,7 +28,7 @@ class PostFile(CamelCaseBaseModel):
     healthbar: Optional[int] = config.default_healthbar
 
 
-class RequestManifest(CamelCaseBaseModel):
+class GetManifestRequest(CamelCaseBaseModel):
     older: Optional[bool] = False
     filename: Optional[str] = ""
     before: Optional[datetime] = datetime.max.isoformat()
@@ -36,12 +36,12 @@ class RequestManifest(CamelCaseBaseModel):
     limit: Optional[int] = config.limit
 
 
-class FileEntry(CamelCaseBaseModel):
+class GetManifestResponseEntry(CamelCaseBaseModel):
     id: UUID
     filename: str
     last_modified: datetime
     remaining: Optional[int]
 
 
-class Entries(CamelCaseBaseModel):
-    entries : list[FileEntry]
+class GetManifestResponse(CamelCaseBaseModel):
+    entries : list[GetManifestResponseEntry]

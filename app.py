@@ -27,9 +27,9 @@ from db import (
 )
 from models import (
     PostFile,
-    RequestManifest,
-    FileEntry,
-    Entries
+    GetManifestRequest,
+    GetManifestResponse,
+    GetManifestResponseEntry,
 )
 
 
@@ -150,10 +150,10 @@ def put_file(file, new_file: PostFile):
     name= "/files/manifest",
     tags= ["files"]
 )
-def get_files(manifest: RequestManifest):
+def get_manifest(manifest: GetManifestRequest):
     with db.session() as s:
-        return Entries(entries = list(map(
-            lambda row: FileEntry(
+        return GetManifestResponse(entries = list(map(
+            lambda row: GetManifestResponseEntry(
                 id=row[0],
                 filename=row[1],
                 last_modified=row[2],
