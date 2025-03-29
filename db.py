@@ -1,6 +1,7 @@
 from uuid import UUID
 from datetime import datetime
 
+from typing import Optional
 from flask_sqlalchemy import SQLAlchemy
 
 from sqlalchemy import (
@@ -32,13 +33,10 @@ class File(Base):
         server_default=func.now(),
         onupdate=func.now()
     )
-    n_downloads: Mapped[int] = mapped_column(
+    downloads: Mapped[int] = mapped_column(
         Integer(),
-        server_default = 0
+        server_default = "0",
     )
-    healthbar: Mapped[int] = mapped_column(
-        Integer(),
-        server_default = config.healthbar
-    )
+    healthbar: Mapped[Optional[int]] = mapped_column(Integer())
 
 db = SQLAlchemy(model_class=Base)
