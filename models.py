@@ -33,7 +33,7 @@ class GetManifestRequest(CamelCaseBaseModel):
     filename: Optional[str] = ""
     before: Optional[datetime] = datetime.max.isoformat()
     after: Optional[datetime] = datetime.min.isoformat()
-    limit: Optional[int] = config.limit
+    limit: Optional[int] = config.default_limit
 
 
 class GetManifestResponseEntry(CamelCaseBaseModel):

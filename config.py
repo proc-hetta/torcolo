@@ -13,7 +13,7 @@ class Config:
     token: str
     db_url: str
     log_level: str
-    limit: int
+    default_limit: int
     default_healthbar: Optional[int]
     def __init__(self):
         config = configparser.ConfigParser()
@@ -21,7 +21,7 @@ class Config:
         self.token = config["Core"]["Token"]
         self.db_url = config["Core"]["DbUrl"]
         self.log_level = config["Core"]["LogLevel"]
-        self.limit = config["Core"]["Limit"]
+        self.default_limit = config["Core"]["DefaultLimit"]
         self.default_healthbar = config["Core"].get("DefaultHealthbar")
 
 config = Config()
