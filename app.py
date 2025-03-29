@@ -76,13 +76,11 @@ def post_file():
 @inject_file
 def get_file(file):
     as_attachment = "download" in request.args
-    use_original_name = "original_name" in request.args
     file_content = file.data
-    filename = file.filename if use_original_name else str(file.id)
+    filename = str(file.id)
     mime_type = magic.from_buffer(file_content, mime=True)
-    if not use_original_name and (file_extension := mimetypes.guess_extension(mime_type)):
+    if (file_extension := mimetypes.guess_extension(mime_type)):
         filename += file_extension
-    filename = request.args.get('filename', filename)
     with db.session() as s:
         s_file = s.get(File, file.id)
         s_file.downloads += 1
