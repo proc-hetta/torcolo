@@ -91,7 +91,20 @@ paths:
       schema:
         type: string
         example: 6721b1ad-a5ba-43e9-b2c4-647fe09a725d
-
+    - name: download
+      in: query
+      description: Download file as attachment
+      required: false
+      schema:
+        type: boolean
+        example: false
+    - name: original_name
+      in: query
+      description: Fetched resources uses file's original name
+      required: false
+      schema:
+        type: boolean
+        example: true
     get:
       tags:
         - files
@@ -181,6 +194,42 @@ paths:
           description: Not found
 
   /files/manifest:
+    parameters:
+    - name: older
+      in: query
+      description: Lists files by ascending date of last change
+      required: false
+      schema:
+        type: boolean
+        example: false
+    - name: filename
+      in: query
+      description: Case-insensitive pattern to match corresponding filenames
+      required: false
+      schema:
+        type: string
+        example: FooBar
+    - name: before
+      in: query
+      description: Lists all files last modified before given date
+      required: false
+      schema:
+        type: string
+        example: 2025-01-10T12:30:00.000000
+    - name: after
+      in: query
+      description: Lists all files last modified after given date
+      required: false
+      schema:
+        type: string
+        example: 2025-01-10T12:30:00.000000
+    - name: limit
+      in: query
+      description: Limits the query to the given number of results
+      required: false
+      schema:
+        type: number
+        example: 100
     get:
       tags:
         - files
