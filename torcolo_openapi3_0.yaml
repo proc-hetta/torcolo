@@ -197,28 +197,28 @@ paths:
     parameters:
     - name: older
       in: query
-      description: Lists files by ascending date of last change
+      description: List files by ascending date of last change
       required: false
       schema:
         type: boolean
         example: false
     - name: filename
       in: query
-      description: Case-insensitive pattern to match corresponding filenames
+      description: A case-insensitive pattern to match corresponding filenames
       required: false
       schema:
         type: string
         example: FooBar
     - name: before
       in: query
-      description: Lists all files last modified before given date
+      description: List all files last modified before given date
       required: false
       schema:
         type: string
         example: 2025-01-10T12:30:00.000000
     - name: after
       in: query
-      description: Lists all files last modified after given date
+      description: List all files last modified after given data
       required: false
       schema:
         type: string
