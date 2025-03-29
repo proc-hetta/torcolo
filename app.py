@@ -10,6 +10,8 @@ from flask import (
     send_file,
     make_response,
 )
+from pydantic import ValidationError
+from flask_pydantic_api import pydantic_api
 
 from config import (
     config,
@@ -23,8 +25,6 @@ from db import (
     db,
     File
 )
-
-from flask_pydantic_api import pydantic_api
 from models import (
     PostFile,
     RequestManifest,
@@ -40,6 +40,11 @@ db.init_app(app)
 
 with app.app_context():
     db.create_all()
+
+
+@app.errorhandler(ValidationError)
+def handle_validation_error(e):
+    return {}, 422
 
 
 @app.get(f"/")
