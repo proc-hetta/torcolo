@@ -25,6 +25,14 @@ from db import (
     File
 )
 
+from flask_pydantic_api import pydantic_api
+from models import (
+    PostFile,
+    RequestManifest,
+    FileEntry,
+    Entries
+)
+
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = config.db_url
@@ -47,19 +55,21 @@ def root():
 
 @app.post(f"/files")
 @authenticated
-def post_file():
-    file = request.files["file"]
-    healthbar = request.form.get("healthbar", config.healthbar)
-    if healthbar:
-        healthbar = int(healthbar)
+@pydantic_api(
+    name= "/files",
+    tags= ["files"],
+)
+def post_file(body: PostFile):
+    if body.healthbar:
+        healthbar = int(body.healthbar)
     file_id = uuid4()
     with db.session() as s:
         s.add(
             File(
                 id = file_id,
-                filename = file.filename,
-                data = file.stream.read(),
-                healthbar = healthbar,
+                filename = body.file.filename,
+                data = body.file.stream.read(),
+                healthbar = body.healthbar,
             )
         )
         s.commit()
@@ -129,32 +139,27 @@ def put_file(file):
 
 @app.get(f"/files/manifest")
 @authenticated
-def get_files():
-    older = "older" in request.args
-    filename = f"%{request.args.get('filename', '')}%"
-    before = datetime.fromisoformat(request.args.get("before", datetime.now().isoformat()))
-    after = datetime.fromisoformat(request.args.get("after", datetime.min.isoformat()))
-    limit = int(request.args.get("limit", 100))
-
+@pydantic_api(
+    name= "/files/manifest",
+    tags= ["files"]
+)
+def get_files(manifest: RequestManifest):
     with db.session() as s:
-        entries = list(map(
-            lambda row: {
-                "id": row[0],
-                "filename": row[1],
-                "last_modified": row[2].isoformat(),
-                "remaining": row[3],
-            },
+        return Entries(entries = list(map(
+            lambda row: FileEntry(
+                id=row[0],
+                filename=row[1],
+                last_modified=row[2],
+                remaining=row[3]),
             s.execute(
                 select(
                     File.id,
                     File.filename,
                     File.last_modified,
                     File.healthbar - File.downloads)
-                .where(File.filename.ilike(filename))
-                .where(File.last_modified.between(after, before))
-                .order_by(File.last_modified.asc() if older else File.last_modified.desc())
-                .limit(limit)
+                .where(File.filename.ilike(f"%{manifest.filename}%"))
+                .where(File.last_modified.between(manifest.after, manifest.before))
+                .order_by(File.last_modified.asc() if manifest.older else File.last_modified.desc())
+                .limit(manifest.limit)
             ).fetchall()
-        ))
-
-    return {"entries": entries}
+        )))
