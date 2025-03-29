@@ -49,7 +49,9 @@ def root():
 @authenticated
 def post_file():
     file = request.files["file"]
-
+    healthbar = request.form.get("healthbar", config.healthbar)
+    if healthbar:
+        healthbar = int(healthbar)
     file_id = uuid4()
     with db.session() as s:
         s.add(
@@ -57,6 +59,7 @@ def post_file():
                 id = file_id,
                 filename = file.filename,
                 data = file.stream.read(),
+                healthbar = healthbar,
             )
         )
         s.commit()
@@ -78,6 +81,12 @@ def get_file(file):
     mime_type = magic.from_buffer(file_content, mime=True)
     if (file_extension := mimetypes.guess_extension(mime_type)):
         filename += file_extension
+    with db.session() as s:
+        s_file = s.get(File, file.id)
+        s_file.downloads += 1
+        if s_file.healthbar is not None and s_file.downloads >= s_file.healthbar:
+            s.delete(s_file)
+        s.commit()
     return send_file(
         io.BytesIO(file_content),
         mimetype=mime_type,
@@ -101,6 +110,7 @@ def delete_file(file):
 @inject_file
 def put_file(file):
     # SQLAlchemy does not yet have a backend-agnostic upsert construct (https://docs.sqlalchemy.org/en/20/orm/queryguide/dml.html#orm-queryguide-upsert)
+    # Update download counter
     with db.session() as s:
         s.delete(file)
         s.add(
@@ -108,6 +118,7 @@ def put_file(file):
                 id = file.id,
                 filename = file.filename,
                 data = request.files["file"].stream.read(),
+                healthbar = file.healthbar
             )
         )
         s.commit()
@@ -129,12 +140,14 @@ def get_files():
                 "id": row[0],
                 "filename": row[1],
                 "last_modified": row[2].isoformat(),
+                "remaining": row[3],
             },
             s.execute(
                 select(
                     File.id,
                     File.filename,
-                    File.last_modified)
+                    File.last_modified,
+                    File.healthbar - File.downloads)
                 .where(File.filename.ilike(filename))
                 .where(File.last_modified.between(after, before))
                 .order_by(File.last_modified.asc() if older else File.last_modified.desc())
