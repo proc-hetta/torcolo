@@ -1,7 +1,6 @@
 import io
 import mimetypes
 from uuid import uuid4
-from datetime import datetime
 
 import magic
 from sqlalchemy import select
@@ -60,8 +59,6 @@ def root():
     tags= ["files"],
 )
 def post_file(body: PostFile):
-    if body.healthbar:
-        healthbar = int(body.healthbar)
     file_id = uuid4()
     with db.session() as s:
         s.add(

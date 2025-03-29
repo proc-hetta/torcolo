@@ -1,4 +1,3 @@
-import json
 from uuid import UUID
 
 from config import config
@@ -9,7 +8,6 @@ from pydantic import (
     BaseModel,
     ConfigDict,
     AliasGenerator,
-    Field,
 )
 from pydantic.alias_generators import to_camel
 from flask_pydantic_api import UploadedFile
