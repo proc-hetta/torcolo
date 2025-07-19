@@ -10,7 +10,7 @@ info:
   license:
     name: MIT
     url: https://raw.githubusercontent.com/proc-hetta/torcolo/refs/heads/master/LICENSE
-  version: 1.0.0
+  version: 1.0.1
 servers:
   - url: https://torcolo.prochetta.best
 tags:
