@@ -14,7 +14,7 @@ RUN mkdir /app/torcolodb && chown torcolo:torcolo /app/torcolodb
 COPY --chown=torcolo . ./
 
 # Install dependencies
-RUN python3 -m pip install -r requirements.txt
+RUN python3 -m pip install -r requirements.txt --no-deps
 
 # Run web application
 CMD ["gunicorn", "-c", "gunicorn.conf.py", "app:app"]

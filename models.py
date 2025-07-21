@@ -1,5 +1,3 @@
-from uuid import UUID
-
 from config import config
 from datetime import datetime
 from typing import Optional
@@ -37,7 +35,7 @@ class GetManifestRequest(CamelCaseBaseModel):
 
 
 class GetManifestResponseEntry(CamelCaseBaseModel):
-    id: UUID
+    id: str
     filename: str
     last_modified: datetime
     remaining: Optional[int]

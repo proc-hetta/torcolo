@@ -1,6 +1,6 @@
 import io
+import hashlib
 import mimetypes
-from uuid import uuid4
 
 import magic
 from sqlalchemy import select
@@ -32,14 +32,23 @@ from models import (
     GetManifestResponseEntry,
 )
 
+from alembic.config import Config
+from alembic.command import ( check, upgrade, current )
+from alembic.util.exc import CommandError
+
+# migration hook
+alembic_cfg = Config(config.alembic_path)
+try:
+    check(alembic_cfg)
+except CommandError as err:
+    upgrade(alembic_cfg, "head")
+finally:
+    current(alembic_cfg)
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = config.db_url
 app.logger.setLevel(config.log_level)
 db.init_app(app)
-
-with app.app_context():
-    db.create_all()
 
 
 @app.errorhandler(ValidationError)
@@ -64,13 +73,14 @@ def root():
     tags= ["files"],
 )
 def post_file(body: PostFile):
-    file_id = uuid4()
+    data = body.file.stream.read()
+    file_id = hashlib.sha256(data).hexdigest()
     with db.session() as s:
         s.add(
             File(
                 id = file_id,
                 filename = body.file.filename,
-                data = body.file.stream.read(),
+                data = data,
                 healthbar = body.healthbar,
             )
         )
@@ -84,7 +94,7 @@ def post_file(body: PostFile):
     return response
 
 
-@app.get(f"/files/<uuid:file>")
+@app.get(f"/files/<string:file>")
 @inject_file
 def get_file(file):
     as_attachment = "download" in request.args
@@ -109,7 +119,7 @@ def get_file(file):
     )
 
 
-@app.delete(f"/files/<uuid:file>")
+@app.delete(f"/files/<string:file>")
 @authenticated
 @inject_file
 def delete_file(file):
@@ -119,7 +129,7 @@ def delete_file(file):
     return {}, 204
 
 
-@app.put(f"/files/<uuid:file>")
+@app.put(f"/files/<string:file>")
 @authenticated
 @inject_file
 @pydantic_api(
