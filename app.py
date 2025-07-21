@@ -76,6 +76,7 @@ def post_file(body: PostFile):
     data = body.file.stream.read()
     file_id = hashlib.sha256(data).hexdigest()
     with db.session() as s:
+        s.query(File).filter(File.id == file_id).delete()
         s.add(
             File(
                 id = file_id,
@@ -125,31 +126,6 @@ def get_file(file):
 def delete_file(file):
     with db.session() as s:
         s.delete(file)
-        s.commit()
-    return {}, 204
-
-
-@app.put(f"/files/<string:file>")
-@authenticated
-@inject_file
-@pydantic_api(
-    name="/files/{fileId}",
-    tags=["files"]
-)
-def put_file(file, new_file: PostFile):
-    # SQLAlchemy does not yet have a backend-agnostic upsert construct (https://docs.sqlalchemy.org/en/20/orm/queryguide/dml.html#orm-queryguide-upsert)
-    # Update download counter
-    with db.session() as s:
-        s.delete(file)
-        s.add(
-            File(
-                id = file.id,
-                filename = new_file.file.filename,
-                data = new_file.file.stream.read(),
-                healthbar = new_file.healthbar,
-                downloads = 0,
-            )
-        )
         s.commit()
     return {}, 204
 
