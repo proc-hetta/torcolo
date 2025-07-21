@@ -5,7 +5,7 @@ from typing import Optional
 from packaging.version import Version
 
 
-VERSION = Version("1.0.1")
+VERSION = Version("2.0.0")
 
 
 @dataclass
